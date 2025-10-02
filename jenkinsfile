@@ -1,0 +1,14 @@
+pipeline{
+    agent any
+
+
+    environment {
+        Docker_Image = "houssem128/myapp:1.0"
+    }
+
+    stages {
+        stage ('Clone') {
+            git branch: 'main' , url:
+        }
+    }
+}
