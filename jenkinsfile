@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Install Dependencies') {
             steps {
-                bat 'npm install'
+                sh 'npm install'
             }
         }
 
@@ -23,7 +23,7 @@ pipeline {
                 script {
                     // "SonarScanner" doit être configuré dans Jenkins
                     withSonarQubeEnv('Sonarqube') {
-                        bat "${tool 'SonarScanner'}\\bin\\sonar-scanner.bat -Dsonar.login=devops-token"
+                        sh "${tool 'SonarScanner'}\\bin\\sonar-scanner.bat -Dsonar.login=devops-token"
                     }
                 }
             }
@@ -31,7 +31,7 @@ pipeline {
 
         stage('Build Docker') {
             steps {
-                bat "docker build -t %DOCKER_IMAGE% ."
+                sh "docker build -t %DOCKER_IMAGE% ."
             }
         }
 
@@ -40,8 +40,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'houssem128-dockerhub',
                                                  usernameVariable: 'DOCKER_USER',
                                                  passwordVariable: 'DOCKER_PASS')]) {
-                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
-                    bat "docker push %DOCKER_IMAGE%"
+                    sh 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                    sh "docker push %DOCKER_IMAGE%"
                 }
             }
         }
