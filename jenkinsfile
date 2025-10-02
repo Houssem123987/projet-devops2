@@ -1,36 +1,68 @@
-pipeline{
+pipeline {
     agent any
 
-
     environment {
-        Docker_Image = "houssem128/projet-devops2:latest"
+        DOCKER_IMAGE = "houssem128/projet-devops2:latest"
     }
 
     stages {
-        stage ('Clone') {
-            git branch: 'main' , url:"https://github.com/Houssem123987/projet-devops2.git"
-        }
-        stage('SonarQube Analysis') {
-           steps {
-              script {
-                withSonarQubeEnv('SonarQube') {
-                bat 'sonar-scanner -Dsonar.login=devops-token'
+        stage('Clone') {
+            steps {
+                git branch: 'main', url: "https://github.com/Houssem123987/projet-devops2.git"
             }
         }
-    }
-}
-      stage('Build Docker') {
+
+        stage('Install Dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Pas de tests définis pour l’instant'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube') {
+                        bat 'sonar-scanner -Dsonar.login=devops-token'
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker') {
             steps {
                 bat "docker build -t %DOCKER_IMAGE% ."
             }
         }
-      stage('Push vers Dockerhub') {
+
+        stage('Push vers Dockerhub') {
             steps {
-               withCredentials([usernamePassword(credentialsId: 'houssem128-dockerhub',
-                                 usernameVariable: 'DOCKER_USER',
-                                 passwordVariable: 'DOCKER_PASS')]) {
-         bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
-         bat "docker push %DOCKER_IMAGE%"
+                withCredentials([usernamePassword(credentialsId: 'houssem128-dockerhub',
+                                                 usernameVariable: 'DOCKER_USER',
+                                                 passwordVariable: 'DOCKER_PASS')]) {
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                    bat "docker push %DOCKER_IMAGE%"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline terminé'
+        }
+        success {
+            echo 'Pipeline réussi !'
+        }
+        failure {
+            echo 'Pipeline échoué !'
+        }
     }
 }
+
 
