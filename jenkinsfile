@@ -10,5 +10,14 @@ pipeline{
         stage ('Clone') {
             git branch: 'main' , url:
         }
+        stage('SonarQube Analysis') {
+           steps {
+              script {
+                withSonarQubeEnv('SonarQube') {
+                bat 'sonar-scanner -Dsonar.login=devops-token'
+            }
+        }
+    }
+}
     }
 }
