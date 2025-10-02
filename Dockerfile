@@ -4,12 +4,6 @@ ARG PNPM_VERSION=10.15.0
 FROM node:${NODE_VERSION}-alpine
 
 ENV NODE_ENV production
-FROM jenkins/agent:alpine
-
-USER root
-RUN apk add --no-cache git bash
-USER jenkins
-
 
 RUN --mount=type=cache,target=/root/.npm \
     npm install -g pnpm@${PNPM_VERSION}
