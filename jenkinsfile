@@ -3,12 +3,12 @@ pipeline{
 
 
     environment {
-        Docker_Image = "houssem128/myapp:1.0"
+        Docker_Image = "houssem128/projet-devops2:latest"
     }
 
     stages {
         stage ('Clone') {
-            git branch: 'main' , url:
+            git branch: 'main' , url:"https://github.com/Houssem123987/projet-devops2.git"
         }
         stage('SonarQube Analysis') {
            steps {
