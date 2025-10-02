@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('Sonarqube') {
-                        bat 'sonar-scanner -Dsonar.login=devops-token'
+                        bat "${tool 'SonarScanner'}\\bin\\sonar-scanner.bat -Dsonar.login=devops-token"
                     }
                 }
             }
